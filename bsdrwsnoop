@@ -50,7 +50,7 @@ inline int HAS_FILTER = $HAS_FILTER;
 #pragma D option quiet
 #pragma D option switchrate=10hz
 
-dtrace:::BEGIN 
+dtrace:::BEGIN
 {
        printf("%5s %6s %-12s %1s %7s %4s %s\n", "UID", "PID", "CMD", "D", "BYTES", "FD", "FILE");
 }
@@ -58,7 +58,7 @@ dtrace:::BEGIN
 syscall::read:entry,
 syscall::write:entry
 /pid != \$pid/
-{ 
+{
        self->ok = HAS_FILTER ? 0 : 1;
 
        (OPT_FILTER_NAME == 1 && OPT_FILTERED_NAME == strstr(OPT_FILTERED_NAME, execname)) ? self->ok = 1 : 1;
@@ -93,7 +93,7 @@ syscall::write:entry
        this->fi_name = this->ncp ? (this->ncp->nc_name != 0 ? stringof(this->ncp->nc_name) : "<unknown>") : "-";
 
        printf("%5d %6d %-12.12s %1s %7d %4d %s\n", uid, pid, execname, self->rw, (int)self->size, (int)self->fd, this->fi_name);
-       
+
        self->ok = 0;
        self->fd = 0;
        self->fp = 0;
