@@ -89,6 +89,7 @@ syscall::read:return,
 syscall::write:entry
 /self->ok/
 {
+       /* get file path information: http://forums.freebsd.org/showthread.php?t=32649 */
        this->ncp = self->vp != 0 ? (&(self->vp->v_cache_dst) != NULL ? self->vp->v_cache_dst.tqh_first : 0) : 0;
        this->fi_name = this->ncp ? (this->ncp->nc_name != 0 ? stringof(this->ncp->nc_name) : "<unknown>") : "-";
        this->v_type = self->vp != 0 ? self->vp->v_type : 0;
