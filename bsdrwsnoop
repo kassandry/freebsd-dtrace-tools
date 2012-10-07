@@ -1,0 +1,109 @@
+#!/bin/sh
+# FreeBSD compatible version of rwsnoop DTrace script. (c) 2012 Alexander Zhuravlev
+# Based on code from http://www.brendangregg.com/DTrace/rwsnoop (c) 2005 Brendan Gregg.
+
+OPT_FILTER_NAME=0
+OPT_FILTERED_NAME=.
+OPT_FILTER_PID=0
+OPT_FILTERED_PID=0
+HAS_FILTER=0
+SCRIPT_PATH=/tmp/dtrace.bsdrwsnoop
+
+trap "rm -f $SCRIPT_PATH" 0
+
+USAGE="
+Usage: bsdrwsnoop [-h] [-n name] [-p pid]\n
+    -n name  # log events from the specified process name only\n
+    -p PID   # log events from the specified PID only\n"
+
+while getopts n:p:h OPT; do
+        case $OPT in
+            h)
+                echo -e $USAGE;
+                exit 0;
+                ;;
+            n)
+                OPT_FILTER_NAME=1
+                OPT_FILTERED_NAME=$OPTARG
+                HAS_FILTER=1
+                ;;
+            p)
+                OPT_FILTER_PID=1
+                OPT_FILTERED_PID=$OPTARG
+                HAS_FILTER=1
+                ;;
+            \?)
+                echo -e $USAGE >&2
+                exit 1
+        esac
+done
+
+shift `expr $OPTIND - 1`
+
+cat > $SCRIPT_PATH <<EOF
+inline int OPT_FILTER_PID = $OPT_FILTER_PID;
+inline int OPT_FILTERED_PID = $OPT_FILTERED_PID;
+inline int OPT_FILTER_NAME  = $OPT_FILTER_NAME;
+inline string OPT_FILTERED_NAME = "$OPT_FILTERED_NAME";
+inline int HAS_FILTER = $HAS_FILTER;
+
+#pragma D option quiet
+#pragma D option switchrate=10hz
+
+dtrace:::BEGIN 
+{
+       printf("%5s %6s %-12s %1s %7s %4s %s\n", "UID", "PID", "CMD", "D", "BYTES", "FD", "FILE");
+}
+
+syscall::read:entry,
+syscall::write:entry
+/pid != \$pid/
+{ 
+       self->ok = HAS_FILTER ? 0 : 1;
+
+       (OPT_FILTER_NAME == 1 && OPT_FILTERED_NAME == strstr(OPT_FILTERED_NAME, execname)) ? self->ok = 1 : 1;
+       (OPT_FILTER_NAME == 1 && execname == strstr(execname, OPT_FILTERED_NAME)) ? self->ok = 1 : 1;
+       (OPT_FILTER_PID == 1 && OPT_FILTERED_PID == pid) ? self->ok = 1 : 1;
+
+       self->fd = self->ok ? arg0 : 0;
+
+       self->fp = curthread->td_proc->p_fd->fd_ofiles[arg0];
+       self->vp = self->fp != 0 ? self->fp->f_vnode : 0;
+}
+
+syscall::read:return
+/self->ok/
+{
+       self->rw = "R";
+       self->size = arg0;
+}
+
+syscall::write:entry
+/self->ok/
+{
+       self->rw = "W";
+       self->size = arg2;
+}
+
+syscall::read:return,
+syscall::write:entry
+/self->ok/
+{
+       this->ncp = self->vp != 0 ? (&(self->vp->v_cache_dst) != NULL ? self->vp->v_cache_dst.tqh_first : 0) : 0;
+       this->fi_name = this->ncp ? (this->ncp->nc_name != 0 ? stringof(this->ncp->nc_name) : "<unknown>") : "-";
+
+       printf("%5d %6d %-12.12s %1s %7d %4d %s\n", uid, pid, execname, self->rw, (int)self->size, (int)self->fd, this->fi_name);
+       
+       self->ok = 0;
+       self->fd = 0;
+       self->fp = 0;
+       self->vp = 0;
+       self->rw = 0;
+       self->size = 0;
+
+       this->ncp = 0;
+       this->fi_name = 0;
+}
+EOF
+
+/usr/sbin/dtrace -s $SCRIPT_PATH
