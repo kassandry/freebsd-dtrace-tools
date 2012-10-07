@@ -52,7 +52,7 @@ inline int HAS_FILTER = $HAS_FILTER;
 
 dtrace:::BEGIN
 {
-       printf("%5s %6s %-12s %1s %7s %4s %s\n", "UID", "PID", "CMD", "D", "BYTES", "FD", "FILE");
+       printf("%5s %6s %-12s %1s %7s %4s %5s %s\n", "UID", "PID", "CMD", "D", "BYTES", "FD", "FTYPE", "FILE");
 }
 
 syscall::read:entry,
@@ -91,8 +91,9 @@ syscall::write:entry
 {
        this->ncp = self->vp != 0 ? (&(self->vp->v_cache_dst) != NULL ? self->vp->v_cache_dst.tqh_first : 0) : 0;
        this->fi_name = this->ncp ? (this->ncp->nc_name != 0 ? stringof(this->ncp->nc_name) : "<unknown>") : "-";
+       this->v_type = self->vp != 0 ? self->vp->v_type : 0;
 
-       printf("%5d %6d %-12.12s %1s %7d %4d %s\n", uid, pid, execname, self->rw, (int)self->size, (int)self->fd, this->fi_name);
+       printf("%5d %6d %-12.12s %1s %7d %4d %5d %s\n", uid, pid, execname, self->rw, (int)self->size, (int)self->fd, this->v_type, this->fi_name);
 
        self->ok = 0;
        self->fd = 0;
@@ -103,6 +104,7 @@ syscall::write:entry
 
        this->ncp = 0;
        this->fi_name = 0;
+       this->v_type = 0;
 }
 EOF
 
