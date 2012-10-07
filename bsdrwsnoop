@@ -1,5 +1,6 @@
 #!/bin/sh
 # FreeBSD compatible version of rwsnoop DTrace script. (c) 2012 Alexander Zhuravlev
+# License: CDDL
 # Based on code from http://www.brendangregg.com/DTrace/rwsnoop (c) 2005 Brendan Gregg.
 
 OPT_FILTER_NAME=0
