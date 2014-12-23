@@ -10,7 +10,7 @@ OPT_FILTERED_PID=0
 HAS_FILTER=0
 SCRIPT_PATH=/tmp/dtrace.bsdrwsnoop
 
-trap "rm -f $SCRIPT_PATH" 0
+trap 'rm -f $SCRIPT_PATH' 0
 
 USAGE="
 Usage: bsdrwsnoop [-h] [-n name] [-p pid]\n
@@ -20,7 +20,7 @@ Usage: bsdrwsnoop [-h] [-n name] [-p pid]\n
 while getopts n:p:h OPT; do
         case $OPT in
             h)
-                echo -e $USAGE;
+                echo -e "$USAGE";
                 exit 0;
                 ;;
             n)
@@ -34,12 +34,12 @@ while getopts n:p:h OPT; do
                 HAS_FILTER=1
                 ;;
             \?)
-                echo -e $USAGE >&2
+                echo -e "$USAGE" >&2
                 exit 1
         esac
 done
 
-shift `expr $OPTIND - 1`
+shift $((OPTIND - 1))
 
 cat > $SCRIPT_PATH <<EOF
 inline int OPT_FILTER_PID = $OPT_FILTER_PID;
