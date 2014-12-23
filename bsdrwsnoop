@@ -68,7 +68,7 @@ syscall::write:entry
 
        self->fd = self->ok ? arg0 : 0;
 
-       self->fp = curthread->td_proc->p_fd->fd_ofiles[arg0];
+       self->fp = curthread->td_proc->p_fd->fd_ofiles[arg0].fde_file;
        self->vp = self->fp != 0 ? self->fp->f_vnode : 0;
 }
 
