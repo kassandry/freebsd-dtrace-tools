@@ -56,8 +56,8 @@ dtrace:::BEGIN
        printf("%5s %6s %-12s %1s %7s %4s %5s %s\n", "UID", "PID", "CMD", "D", "BYTES", "FD", "FTYPE", "FILE");
 }
 
-syscall::read:entry,
-syscall::write:entry
+syscall::*read:entry,
+syscall::*write:entry
 /pid != \$pid/
 {
        self->ok = HAS_FILTER ? 0 : 1;
@@ -67,29 +67,29 @@ syscall::write:entry
        (OPT_FILTER_PID == 1 && OPT_FILTERED_PID == pid) ? self->ok = 1 : 1;
 
        self->fd = self->ok ? arg0 : 0;
-
-       self->fp = curthread->td_proc->p_fd->fd_ofiles[arg0].fde_file;
-       self->vp = self->fp != 0 ? self->fp->f_vnode : 0;
 }
 
-syscall::read:return
+syscall::*read:return
 /self->ok/
 {
        self->rw = "R";
        self->size = arg0;
 }
 
-syscall::write:entry
+syscall::*write:entry
 /self->ok/
 {
        self->rw = "W";
        self->size = arg2;
 }
 
-syscall::read:return,
-syscall::write:entry
+syscall::*read:return,
+syscall::*write:entry
 /self->ok/
 {
+       self->fp = curthread->td_proc->p_fd->fd_ofiles[self->fd].fde_file;
+       self->vp = self->fp != 0 ? self->fp->f_vnode : 0;
+
        /* get file path information: http://forums.freebsd.org/showthread.php?t=32649 */
        this->ncp = self->vp != 0 ? (&(self->vp->v_cache_dst) != NULL ? self->vp->v_cache_dst.tqh_first : 0) : 0;
        this->fi_name = this->ncp ? (this->ncp->nc_name != 0 ? stringof(this->ncp->nc_name) : "<unknown>") : "-";
