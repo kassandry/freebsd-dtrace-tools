@@ -80,8 +80,7 @@ fbt::zfs_freebsd_read:return, fbt::zfs_freebsd_write:return, fbt::zfs_freebsd_re
 /self->start && (timestamp - self->start) >= min_ns/
 {
 	this->iotime = (timestamp - self->start) / 1000000;
-	this->dir    = probefunc == "zfs_freebsd_read" ? "R" :
-	probefunc   == "zfs_freebsd_write" ? "W" : "D";
+	this->dir = ( probefunc == "zfs_freebsd_read" ? "R" : ( probefunc == "zfs_freebsd_write" ? "W" : "D") );
 	printf("%-20Y %-16s %1s %4d %6d %s\n", walltimestamp,
 		execname, this->dir, self->kb, this->iotime,
 		self->path != NULL ? stringof(self->path) : "<null>");
