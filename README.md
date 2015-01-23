@@ -10,3 +10,11 @@ name or PID.
     ./bsdrwsnoop
     ./bsdrwsnoop -p 1773
     ./bsdrwsnoop -n bash
+
+# zfsslower.d
+
+Shows ZFS read/write per process and file that are slower than
+a certain number of milliseconds, provided as a command line argument
+
+## Example:
+   ./zfsslower.d 100
