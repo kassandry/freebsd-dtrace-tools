@@ -17,4 +17,4 @@ Shows ZFS read/write per process and file that are slower than
 a certain number of milliseconds, provided as a command line argument
 
 ## Example:
-   ./zfsslower.d 100
+    ./zfsslower.d 100
