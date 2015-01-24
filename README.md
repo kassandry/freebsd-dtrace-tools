@@ -3,7 +3,7 @@ The collection contains FreeBSD compatible versions of common DTrace scripts.
 # bsdrwsnoop
 
 Outputs information about read/write calls by processes.
-Provides possibility to filter output by a certain process
+Also provides the possibility to filter output by a certain process
 name or PID.
 
 ## Example:
@@ -37,6 +37,7 @@ Observes VFS events (open, close, read, etc.) for running systems
 # zfstxgsyncbytes.d
 
 Track the amount of outstanding dirty data within your storage pool to know which way to adjust zfs_dirty_data_max.
+Requires the name of your zpool as a command line argument
 
 ## Example:
     ./zfstxgsyncbytes.d zroot
@@ -44,6 +45,7 @@ Track the amount of outstanding dirty data within your storage pool to know whic
 # zfstxgsyncduration.d
 
 Measure the time to sync transaction groups, so that you know how long it would take to flush zfs_dirty_data_max bytes to disk.
+Requires the name of your zpool as a command line argument
 
 ## Example:
     ./zfstxgsyncbytes.d zroot
