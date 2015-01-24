@@ -36,7 +36,7 @@
  * TESTED: this fbt provider based script may only work on some OS versions.
  *      121: ok
  * 
- * Lacey Powers: Updated for FreeBSD 10.1. 
+ * 2015-Jan-22 Lacey Powers Updated for FreeBSD 10.1. 
  */
 
 #pragma D option quiet

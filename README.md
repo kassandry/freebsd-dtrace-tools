@@ -18,3 +18,11 @@ a certain number of milliseconds, provided as a command line argument
 
 ## Example:
     ./zfsslower.d 100
+
+# zilt10k.d
+
+Traces 10,000 IO events or 15 minutes, whichever comes first. Traces user-level events via the
+ZFS/VFS interfaces, and is very verbose, because it includes ARC hits.
+
+## Example:
+    ./zilt10k.d
