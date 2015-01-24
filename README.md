@@ -26,3 +26,24 @@ ZFS/VFS interfaces, and is very verbose, because it includes ARC hits.
 
 ## Example:
     ./zilt10k.d
+
+# vfssnoop.d
+
+Observes VFS events (open, close, read, etc.) for running systems
+
+## Example:
+    ./vfssnoop.d
+
+# zfstxgsyncbytes.d
+
+Track the amount of outstanding dirty data within your storage pool to know which way to adjust zfs_dirty_data_max.
+
+## Example:
+    ./zfstxgsyncbytes.d zroot
+
+# zfstxgsyncduration.d
+
+Measure the time to sync transaction groups, so that you know how long it would take to flush zfs_dirty_data_max bytes to disk.
+
+## Example:
+    ./zfstxgsyncbytes.d zroot
