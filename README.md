@@ -48,4 +48,4 @@ Measure the time to sync transaction groups, so that you know how long it would 
 Requires the name of your zpool as a command line argument
 
 ## Example:
-    ./zfstxgsyncbytes.d zroot
+    ./zfstxgsyncduration.d zroot
