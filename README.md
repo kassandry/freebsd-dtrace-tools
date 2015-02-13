@@ -49,3 +49,10 @@ Requires the name of your zpool as a command line argument
 
 ## Example:
     ./zfstxgsyncduration.d zroot
+
+# spasync.d
+
+Measure time, size, and number of IO operations, per spa_sync() call, which is the call which writes your txg out to disk.
+
+## Example:
+    ./spasync.d
