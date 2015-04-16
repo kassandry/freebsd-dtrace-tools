@@ -56,3 +56,20 @@ Measure time, size, and number of IO operations, per spa_sync() call, which is t
 
 ## Example:
     ./spasync.d
+
+# rw.d
+
+Measure average latency, standard deviation, iops, and throughput with a distribution for IO operations. Useful for adjusting 
+the following sysctls for your hardware:
+
+	vfs.zfs.vdev.sync_read_min_active
+	vfs.zfs.vdev.sync_read_max_active
+	vfs.zfs.vdev.sync_write_min_active
+	vfs.zfs.vdev.sync_write_max_active
+	vfs.zfs.vdev.async_read_min_active
+	vfs.zfs.vdev.async_read_max_active
+	vfs.zfs.vdev.async_write_min_active
+	vfs.zfs.vdev.async_write_max_active
+
+## Example:
+    ./rw.d
