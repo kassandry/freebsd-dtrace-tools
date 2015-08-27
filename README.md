@@ -83,3 +83,13 @@ Adapted for FreeBSD from: http://www.richardelling.com/Home/scripts-and-programs
 ## Example:
     ./zilstat
 
+    ./zilstat -t 60    (print timestamps with output every 60 seconds)
+
+	./zilstat 10 6     (print 10 samples 6 times)
+
+	./zilstat -p zroot (print activity for a particular zpool)
+
+	./zilstat -h       (print additional help and usage)
+
+
+
