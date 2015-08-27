@@ -12,7 +12,7 @@ COUNT=-1
 
 SCRIPT_PATH=/tmp/dtrace.zilstat
 
-#trap 'rm -f $SCRIPT_PATH' 0
+trap 'rm -f $SCRIPT_PATH' 0
 
 while getopts hl:Mp:t OPT
 do

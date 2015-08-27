@@ -77,6 +77,7 @@ the following sysctls for your hardware:
 # zilstat
 
 Measure ZIL activity to determine if an SLOG device will be a useful addition to your zpool
+
 Adapted for FreeBSD from: http://www.richardelling.com/Home/scripts-and-programs-1/zilstat
 
 ## Example:
