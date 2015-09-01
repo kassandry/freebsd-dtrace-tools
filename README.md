@@ -80,6 +80,8 @@ Measure ZIL activity to determine if an SLOG device will be a useful addition to
 
 Adapted for FreeBSD from: http://www.richardelling.com/Home/scripts-and-programs-1/zilstat
 
+Note: Requires FreeBSD 10.2 or later, otherwise the necessary function to trace is inlined.
+
 ## Example:
     ./zilstat
 
