@@ -28,40 +28,41 @@ do
         ;;
     h|?)    
         ME="$(basename $0)"
-        cat <<-END >&2
-        Usage: $ME [gMt][-l linecount] [-p poolname] [INTERVAL [COUNT]]
-
-    -M  # print numbers as megabytes (base 10)
-    -t  # print timestamp
-    -p poolname      # only look at poolname
-    -l linecount     # print header every linecount lines (default=only once)
-
-    interval in seconds or "txg" for transaction group commit intervals
-    note: "txg" only appropriate when -p poolname is used
-    count will limit the number of intervals reported
-
-    examples:
-        $ME # default output, 1 second samples
-        $ME 10  # 10 second samples
-        $ME 10 6    # print 6 x 10 second samples
-        $ME -p rpool    # show ZIL stats for rpool only
-
-    output:
-        [TIME]
-        N-Bytes    - data bytes written to ZIL over the interval
-        N-Bytes/s  - data bytes/s written to ZIL over ther interval
-        N-Max-Rate - maximum data rate during any 1-second sample
-        B-Bytes    - buffer bytes written to ZIL over the interval
-        B-Bytes/s  - buffer bytes/s written to ZIL over ther interval
-        B-Max-Rate - maximum buffer rate during any 1-second sample
-        ops        - number of synchronous iops per interval
-        <=4kB      - number of synchronous iops <= 4kBytes per interval
-        4-32kB     - number of synchronous iops 4-32kBytes per interval
-        >=32kB     - number of synchronous iops >= 32kBytes per interval
-
-        note: data bytes are actual data, total bytes counts buffer size
+        cat 2>&1 <<'        END' | sed -e 's/            //'
+            Usage: $ME [gMt][-l linecount] [-p poolname] [INTERVAL [COUNT]]
+        
+            -M  # print numbers as megabytes (base 10)
+            -t  # print timestamp
+            -p poolname      # only look at poolname
+            -l linecount     # print header every linecount lines (default=only once)
+        
+            interval in seconds or "txg" for transaction group commit intervals
+            note: "txg" only appropriate when -p poolname is used
+            count will limit the number of intervals reported
+        
+            examples:
+                $ME # default output, 1 second samples
+                $ME 10  # 10 second samples
+                $ME 10 6    # print 6 x 10 second samples
+                $ME -p rpool    # show ZIL stats for rpool only
+        
+            output:
+                [TIME]
+                N-Bytes    - data bytes written to ZIL over the interval
+                N-Bytes/s  - data bytes/s written to ZIL over ther interval
+                N-Max-Rate - maximum data rate during any 1-second sample
+                B-Bytes    - buffer bytes written to ZIL over the interval
+                B-Bytes/s  - buffer bytes/s written to ZIL over ther interval
+                B-Max-Rate - maximum buffer rate during any 1-second sample
+                ops        - number of synchronous iops per interval
+                <=4kB      - number of synchronous iops <= 4kBytes per interval
+                4-32kB     - number of synchronous iops 4-32kBytes per interval
+                >=32kB     - number of synchronous iops >= 32kBytes per interval
+        
+                note: data bytes are actual data, total bytes counts buffer size
         END
         exit 1
+		;;
     esac
 done
 
@@ -99,7 +100,7 @@ case "$INTERVAL" in
         ;;
 esac
 
-cat > $SCRIPT_PATH <<EOF
+cat > $SCRIPT_PATH << EOF
      #pragma D option quiet
      inline int OPT_TIME = $OPT_TIME;
      inline int OPT_TXG  = $OPT_TXG;
