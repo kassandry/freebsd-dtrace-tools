@@ -7,6 +7,9 @@
  *
  * Updated to work on FreeBSD 10.1
  * 
+ * Including improvements from baitisj to make it 
+ * more concise and clear under FreeBSD
+ * 
  */
 
 
@@ -26,15 +29,18 @@ BEGIN
 }
 
 io:::start
-/args[0] != NULL && args[0]->bio_disk != NULL/
+/args[0] != NULL && args[1] != NULL/
 {
-    ts[args[0]->bio_disk->d_geom->name, args[0]->bio_pblkno] = timestamp;
+	/* Rather than relying on args[0]->bio_disk->d_geom->name, */
+	/*  FreeBSD assigns a unique device_number per device.*/
+	/* See man devstat for more information */ 
+    ts[args[1]->device_number, args[0]->bio_pblkno] = timestamp;
 }
 
 io:::done
-/args[0] != NULL && args[0]->bio_disk != NULL && ts[args[0]->bio_disk->d_geom->name, args[0]->bio_pblkno]/
+/args[0] != NULL && args[1] != NULL && ts[args[1]->device_number, args[0]->bio_pblkno]/
 {
-        this->delta = (timestamp - ts[args[0]->bio_disk->d_geom->name, args[0]->bio_pblkno]) / 1000;
+        this->delta = (timestamp - ts[args[1]->device_number, args[0]->bio_pblkno]) / 1000;
 		this->name = bio_cmd[args[0]->bio_cmd];
 
         @q[this->name] = quantize(this->delta);
@@ -43,7 +49,7 @@ io:::done
         @i[this->name] = count();
         @b[this->name] = sum(args[0]->bio_bcount);
 
-        ts[args[0]->bio_disk->d_geom->name, args[0]->bio_pblkno] = 0;
+        ts[args[1]->device_number, args[0]->bio_pblkno] = 0;
 }
 
 END
