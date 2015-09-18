@@ -31,10 +31,10 @@ BEGIN
 io:::start
 /args[0] != NULL && args[1] != NULL/
 {
-    /* Rather than relying on args[0]->bio_disk->d_geom->name, */
-    /*  FreeBSD assigns a unique device_number per device.*/
-    /* See man devstat for more information */
-    ts[args[1]->device_number, args[0]->bio_pblkno] = timestamp;
+         /* Rather than relying on args[0]->bio_disk->d_geom->name, */
+         /*  FreeBSD assigns a unique device_number per device.*/
+         /* See man devstat for more information */
+         ts[args[1]->device_number, args[0]->bio_pblkno] = timestamp;
 }
 
 io:::done
