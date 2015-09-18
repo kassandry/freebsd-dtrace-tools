@@ -1,15 +1,15 @@
 #!/usr/sbin/dtrace -s
 
-/* 
+/*
  * Borrowed from the very useful blog post here:
- *   
+ *
  * http://dtrace.org/blogs/ahl/2014/08/31/openzfs-tuning/
  *
  * Updated to work on FreeBSD 10.1
- * 
- * Including improvements from baitisj to make it 
+ *
+ * Including improvements from baitisj to make it
  * more concise and clear under FreeBSD
- * 
+ *
  */
 
 
@@ -31,9 +31,9 @@ BEGIN
 io:::start
 /args[0] != NULL && args[1] != NULL/
 {
-	/* Rather than relying on args[0]->bio_disk->d_geom->name, */
-	/*  FreeBSD assigns a unique device_number per device.*/
-	/* See man devstat for more information */ 
+    /* Rather than relying on args[0]->bio_disk->d_geom->name, */
+    /*  FreeBSD assigns a unique device_number per device.*/
+    /* See man devstat for more information */
     ts[args[1]->device_number, args[0]->bio_pblkno] = timestamp;
 }
 
@@ -41,7 +41,7 @@ io:::done
 /args[0] != NULL && args[1] != NULL && ts[args[1]->device_number, args[0]->bio_pblkno]/
 {
         this->delta = (timestamp - ts[args[1]->device_number, args[0]->bio_pblkno]) / 1000;
-		this->name = bio_cmd[args[0]->bio_cmd];
+        this->name = bio_cmd[args[0]->bio_cmd];
 
         @q[this->name] = quantize(this->delta);
         @a[this->name] = avg(this->delta);
